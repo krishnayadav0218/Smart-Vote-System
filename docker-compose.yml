@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=${SECRET_KEY:?Set a strong SECRET_KEY in .env before running}
+      - SEED_ADMIN_PASSWORD=${SEED_ADMIN_PASSWORD:?Set an admin password in .env before running}
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:80
+      - DATABASE_URL=sqlite:////data/smartvote.db
+    volumes:
+      - smartvote_data:/data
+
+  frontend:
+    build:
+      context: .
+      args:
+        VITE_API_URL: http://localhost:8000
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  smartvote_data:
